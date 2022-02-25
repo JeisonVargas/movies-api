@@ -1,0 +1,33 @@
+{
+  "name": "movies-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "lint": "eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JeisonVargas/movies-api.git"
+  },
+  "author": "Jeison Vargas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JeisonVargas/movies-api/issues"
+  },
+  "homepage": "https://github.com/JeisonVargas/movies-api#readme",
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.4.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "helmet": "^5.0.2"
+  }
+}
