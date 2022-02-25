@@ -3,14 +3,14 @@ const helmet = require('helmet');
 
 const config = require('./config');
 
+const moviesApi = require('./routes/movies');
+
 const app = express();
 
-app.use(express.json);
+app.use(express.json());
 app.use(helmet());
 
-app.get('/', (req, res) => {
-  res.send('Hola mundo');
-})
+moviesApi(app);
 
 app.listen(config.port, () => {
   console.log(`Listening http://localhost:${config.port}`);
