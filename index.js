@@ -1,5 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const config = require('./config');
 
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(express.json());
 app.use(helmet());
+app.use(cors());
 
 authApi(app);
 moviesApi(app);
