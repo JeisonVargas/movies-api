@@ -33,8 +33,11 @@ const updateMovieSchema = {
   private: moviePrivateSchema,
 };
 
+const pageSchema = Joi.number().min(1);
+
 module.exports = {
   movieIdSchema,
   createMovieSchema,
   updateMovieSchema,
+  pageSchema,
 }

@@ -12,16 +12,28 @@ class MoviesService {
     return createMovieId;
   }
 
-  async getAllPublicMovies() {
-    let query = { private: false }
-    const movies = await this.mongoDB.getAll(this.collection, query);
-    return movies || [];
+  async getMoviesPagination({ query, page = 1 }) {
+    const movies = await this.mongoDB.getAll(this.collection, query, 10, 10 * (page - 1));
+    const total_movies = await this.mongoDB.getAll(this.collection, query);
+
+    let total_pages = Math.ceil(total_movies.length/10);
+    if (page > total_pages) {
+      throw (boom.badRequest(`page "${page}" is not available`))
+    }
+
+    return { page, results: movies || [], total_pages, total_results: total_movies.length }
   }
 
-  async getMyMovies({ user }) {
-    const query = { user_id_create: user._id }
-    const movies = await this.mongoDB.getAll(this.collection, query);
-    return movies || [];
+  async getAllPublicMovies({ page }) {
+    const query = { private: false };
+    const response = await this.getMoviesPagination({ query, page });
+    return response;
+  }
+
+  async getMyMovies({ user, page }) {
+    const query = { user_id_create: user._id };
+    const response = await this.getMoviesPagination({ query, page });
+    return response;
   }
 
   async getMovie({ movieId }) {

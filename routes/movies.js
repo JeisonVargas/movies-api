@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 
 const MoviesService = require('../services/movies');
-const { movieIdSchema, createMovieSchema, updateMovieSchema } = require('../utils/schemas/movies');
+const { movieIdSchema, createMovieSchema, updateMovieSchema, pageSchema } = require('../utils/schemas/movies');
 const validationHandler = require('../utils/middleware/validationHandler');
 
 require('../utils/auth/jwt');
@@ -24,22 +24,25 @@ function moviesApi(app) {
     }
   });
 
-  router.get('/all-public', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  router.get('/all-public', passport.authenticate('jwt', { session: false }), validationHandler({ page: pageSchema }, 'query'), async (req, res, next) => {
+    const { page } = req.query;
     try {
-      const movies = await moviesService.getAllPublicMovies();
+      const response = await moviesService.getAllPublicMovies({ page });
 
-      res.status(200).json({ data: movies, message: 'public movies listed' });
+      res.status(200).json(response);
     } catch (err) {
       next(err);
     }
   });
 
-  router.get('/my-movies', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  router.get('/my-movies', passport.authenticate('jwt', { session: false }), validationHandler({ page: pageSchema }, 'query'), async (req, res, next) => {
     const { user } = req;
-    try {
-      const movies = await moviesService.getMyMovies({ user });
+    const { page } = req.query;
 
-      res.status(200).json({ data: movies, message: 'movie retrieved' });
+    try {
+      const response = await moviesService.getMyMovies({ user, page });
+
+      res.status(200).json(response);
     } catch (err) {
       next(err);
     }
