@@ -39,7 +39,7 @@ function authApi(app) {
             expiresIn: '20m'
           });
 
-          return res.status(200).json({ token, user: { id, name, email } });
+          return res.status(200).json({ token, user: { id, email } });
         });
       } catch (error) {
         next(error);

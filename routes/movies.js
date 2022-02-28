@@ -61,11 +61,11 @@ function moviesApi(app) {
     }
   });
 
-  router.delete('/:movieId', passport.authenticate('jwt', { session: false }), validationHandler({ movieId: movieIdSchema }, 'params'), async (req, res, next) => {
-    const { movieId } = req.params;
+  router.delete('/:movieIdToDelete', passport.authenticate('jwt', { session: false }), validationHandler({ movieIdToDelete: movieIdSchema }, 'params'), async (req, res, next) => {
+    const { movieIdToDelete } = req.params;
     const { user } = req;
     try {
-      const deletedMovieId = await moviesService.deleteMovie({ movieId, user });
+      const deletedMovieId = await moviesService.deleteMovie({ movieIdToDelete, user });
 
       res.status(200).json({ data: deletedMovieId, message: 'movie deleted' });
     } catch (err) {

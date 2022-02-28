@@ -1,0 +1,804 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Movies API",
+    "description": "A RESTful API for movies with dummy data, sign up and sign in. Build with Node, Express, Mongo and Passport. Deployed in [Heroku](https://serene-retreat-69428.herokuapp.com/)",
+    "version": "1.0.0",
+    "contact": {
+      "email": "jeisonvargas08@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://serene-retreat-69428.herokuapp.com/",
+      "description": "Deloyed in Heroku"
+    }
+  ],
+  "paths": {
+    "/api/auth/sign-up": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Create user",
+        "description": "Service to create new users",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful user created return the id of the new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/create_user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "error": "Bad request",
+                  "message": "\"email\" must be a valid email || \"password\" with value \"Contraseña\" fails to match the (one lowercase letter, one uppercase letter and one of the following characters: !, @, #, ? or ].) pattern || \"email\" is already registered"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/sign-in": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Authentication",
+        "description": "Basic authentication email and password, return jwt and user",
+        "requestBody": {
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "Successful authentication return an object with jwt and user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/token_user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "error": "Bad request",
+                  "message": "\"email\" must be a valid email || \"password\" with value \"Contraseña\" fails to match the (one lowercase letter, one uppercase letter and one of the following characters: !, @, #, ? or ].) pattern"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "\"email\" is not registered || \"password\" does not match"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
+    "/api/movies": {
+      "post": {
+        "tags": [
+          "movies"
+        ],
+        "summary": "Create movie",
+        "description": "Create new movie and return id of the movie",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "release_date": {
+                    "type": "string"
+                  },
+                  "overview": {
+                    "type": "string"
+                  },
+                  "poster_path": {
+                    "type": "string"
+                  },
+                  "backdrop_path": {
+                    "type": "string"
+                  },
+                  "vote_average": {
+                    "type": "number"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "private": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "title",
+                  "release_date",
+                  "overview",
+                  "poster_path",
+                  "backdrop_path",
+                  "vote_average",
+                  "genres",
+                  "private"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Create movie return an object with id and message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "data": "621b07e94283086506987a6c",
+                  "message": "movie created"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "error": "Bad Request",
+                  "message": "\"title\" is required || \"release_date\" is required || ..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/movies/all-public": {
+      "get": {
+        "tags": [
+          "movies"
+        ],
+        "summary": "Select all public movies",
+        "description": "Get all public movies with pagination, 10 movies per page",
+        "parameters": [{
+          "name": "page",
+          "in": "query",
+          "description": "page number to get",
+          "required": false,
+          "type": "integer"
+        }],
+        "responses": {
+          "200": {
+            "description": "Select all public movies return an object with page, public movies, total pages and total movies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "total_pages": {
+                      "type": "integer"
+                    },
+                    "total_results": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "example": {
+                  "page": "1",
+                  "results": [
+                    {
+                        "_id": "621afbc40cfe90310fb8647e",
+                        "title": "Spider-Man: No Way Home",
+                        "release_date": "2021-12-15",
+                        "overview": "Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man.",
+                        "poster_path": "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                        "backdrop_path": "/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg",
+                        "vote_average": 8.3,
+                        "genres": [
+                            "Action",
+                            "Adventure",
+                            "Science Fiction"
+                        ],
+                        "private": false,
+                        "user_email_create": "jeisonvargas08@gmail.com",
+                        "user_id_create": "621b078b4283086506987a6a"
+                    },
+                    {
+                        "_id": "621afce93a783952c01a3fc5",
+                        "title": "Encanto",
+                        "release_date": "2021-11-24",
+                        "overview": "The tale of an extraordinary family, the Madrigals, who live hidden in the mountains of Colombia, in a magical house, in a vibrant town, in a wondrous, charmed place called an Encanto. The magic of the Encanto has blessed every child in the family with a unique gift from super strength to the power to heal—every child except one, Mirabel. But when she discovers that the magic surrounding the Encanto is in danger, Mirabel decides that she, the only ordinary Madrigal, might just be her exceptional family's last hope.",
+                        "poster_path": "/4j0PNHkMr5ax3IA8tjtxcmPU3QT.jpg",
+                        "backdrop_path": "/3G1Q5xF40HkUBJXxt2DQgQzKTp5.jpg",
+                        "vote_average": 7.8,
+                        "genres": [
+                            "Animation",
+                            "Comedy",
+                            "Family",
+                            "Fantasy"
+                        ],
+                        "private": false,
+                        "user_email_create": "jeisonvargas08@gmail.com",
+                        "user_id_create": "621b078b4283086506987a6a"
+                    },
+                    {
+                      "_id": "621b1bd3a734b191851204d2",
+                      "title": "Back in the Day",
+                      "release_date": "2021-09-06",
+                      "overview": "In hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.\n\nAliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
+                      "poster_path": "http://dummyimage.com/211x100.png/cc0000/ffffff",
+                      "backdrop_path": "http://dummyimage.com/201x100.png/cc0000/ffffff",
+                      "vote_average": 3.73,
+                      "genres": [
+                          "Horror",
+                          "Action|Horror|Sci-Fi"
+                      ],
+                      "private": false,
+                      "user_id_create": "621ad2d26647541e297b62c9",
+                      "user_email_create": "v@rgas.com"
+                    }
+                  ],
+                  "total_pages": "1",
+                  "total_results": "3"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/movies/my-movies": {
+      "get": {
+        "tags": [
+          "movies"
+        ],
+        "summary": "Select all my movies",
+        "description": "Get all my movies with pagination, 10 movies per page",
+        "parameters": [{
+          "name": "page",
+          "in": "query",
+          "description": "page number to get",
+          "required": false,
+          "type": "integer"
+        }],
+        "responses": {
+          "200": {
+            "description": "Select all my movies return an object with page, public movies, total pages and total movies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "total_pages": {
+                      "type": "integer"
+                    },
+                    "total_results": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "example": {
+                  "page": "1",
+                  "results": [
+                    {
+                        "_id": "621afbc40cfe90310fb8647e",
+                        "title": "Spider-Man: No Way Home",
+                        "release_date": "2021-12-15",
+                        "overview": "Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man.",
+                        "poster_path": "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+                        "backdrop_path": "/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg",
+                        "vote_average": 8.3,
+                        "genres": [
+                            "Action",
+                            "Adventure",
+                            "Science Fiction"
+                        ],
+                        "private": false,
+                        "user_email_create": "jeisonvargas08@gmail.com",
+                        "user_id_create": "621b078b4283086506987a6a"
+                    },
+                    {
+                        "_id": "621afce93a783952c01a3fc5",
+                        "title": "Encanto",
+                        "release_date": "2021-11-24",
+                        "overview": "The tale of an extraordinary family, the Madrigals, who live hidden in the mountains of Colombia, in a magical house, in a vibrant town, in a wondrous, charmed place called an Encanto. The magic of the Encanto has blessed every child in the family with a unique gift from super strength to the power to heal—every child except one, Mirabel. But when she discovers that the magic surrounding the Encanto is in danger, Mirabel decides that she, the only ordinary Madrigal, might just be her exceptional family's last hope.",
+                        "poster_path": "/4j0PNHkMr5ax3IA8tjtxcmPU3QT.jpg",
+                        "backdrop_path": "/3G1Q5xF40HkUBJXxt2DQgQzKTp5.jpg",
+                        "vote_average": 7.8,
+                        "genres": [
+                            "Animation",
+                            "Comedy",
+                            "Family",
+                            "Fantasy"
+                        ],
+                        "private": false,
+                        "user_email_create": "jeisonvargas08@gmail.com",
+                        "user_id_create": "621b078b4283086506987a6a"
+                    }
+                  ],
+                  "total_pages": "1",
+                  "total_results": "2"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/movies/:movieId": {
+      "put": {
+        "tags": [
+          "movies"
+        ],
+        "summary": "Update movie",
+        "description": "Update movie and return id of the movie",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "description": "movieId to update",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "release_date": {
+                    "type": "string"
+                  },
+                  "overview": {
+                    "type": "string"
+                  },
+                  "poster_path": {
+                    "type": "string"
+                  },
+                  "backdrop_path": {
+                    "type": "string"
+                  },
+                  "vote_average": {
+                    "type": "number"
+                  },
+                  "genres": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "private": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update movie return an object with id and message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "data": "621b07e94283086506987a6c",
+                  "message": "movie updated"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "error": "Bad Request",
+                  "message": "\"title\" must be a string || \"private\" must be a boolean || ..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/movies/:movieIdToDelete": {
+      "delete": {
+        "tags": [
+          "movies"
+        ],
+        "summary": "Delete movie",
+        "description": "Delete movie return id of the movie",
+        "parameters": [
+          {
+            "name": "movieIdToDelete",
+            "in": "path",
+            "description": "movie id to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete movie return an object with id and message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "data": "621b07e94283086506987a6c",
+                  "message": "movie delete"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "error": "Bad Request",
+                  "message": "That movie does not exists \"movie_id\" 621b07e94283086506987a6c || You do not have permission to delete this movie \"movie_id\" 621b07e94283086506987a6c"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/imdb/random-page": {
+      "get": {
+        "tags": [
+          "imdb"
+        ],
+        "summary": "Select a randow page from imdb api",
+        "description": "Select a randow page between 1 and 500 from imdb api",
+        "responses": {
+          "200": {
+            "description": "Select a randow page between 1 and 500 from imdb api return an object with page, public movies, total pages and total movies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "page": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "total_pages": {
+                      "type": "integer"
+                    },
+                    "total_results": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthoized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/boomErrors"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "error": "Unauthorized",
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "create_user": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "data": "621b07e94283086506987a6c",
+          "message": "user created"
+        }
+      },
+      "token_user": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "example": {
+          "token": "jsonwebtoken",
+          "user": {
+            "id": "621b07e94283086506987a6c",
+            "email": "example@domain.com"
+          }
+        }
+      },
+      "boomErrors": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

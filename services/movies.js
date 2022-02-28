@@ -56,18 +56,18 @@ class MoviesService {
     return updatedMovieId;
   }
 
-  async deleteMovie({ movieId, user }) {
-    let validateMovie = await this.getMovie({ movieId });
+  async deleteMovie({ movieIdToDelete, user }) {
+    let validateMovie = await this.getMovie({ movieIdToDelete });
 
     if (!validateMovie._id) {
-      throw (boom.badRequest(`That movie does not exists "movie_id" ${movieId} `))
+      throw (boom.badRequest(`That movie does not exists "movie_id" ${movieIdToDelete} `))
     }
 
     if (user.email !== validateMovie.user_email_create) {
-      throw (boom.forbidden(`You do not have permission to delete this movie "movie_id" ${movieId} `))
+      throw (boom.forbidden(`You do not have permission to delete this movie "movie_id" ${movieIdToDelete} `))
     }
 
-    const deletedMovieId = await this.mongoDB.delete(this.collection, movieId);
+    const deletedMovieId = await this.mongoDB.delete(this.collection, movieIdToDelete);
     return deletedMovieId;
   }
 }

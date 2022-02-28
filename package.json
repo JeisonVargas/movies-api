@@ -44,7 +44,8 @@
     "mongodb": "^4.4.0",
     "passport": "^0.5.2",
     "passport-http": "^0.3.0",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.0",
+    "swagger-ui-express": "^4.3.0"
   },
   "engines": {
     "node": "14.x"
